@@ -12,7 +12,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.hancom.lms.utils.AzureStorageUtil;
-import com.microsoft.azure.storage.core.Logger;
 
 
 @SpringBootApplication
