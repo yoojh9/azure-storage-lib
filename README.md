@@ -38,3 +38,9 @@ $ az storage account show-connection-string --name {저장소} --resource-group 
 - SAS URI = Storage Resource URI + SAS Token
 - SAS의 만료 시간과 시작 시간은 UTC로 표시해야 한다.
 - [SAS(공유 엑세스 서명) 참고](https://docs.microsoft.com/ko-kr/azure/storage/common/storage-dotnet-shared-access-signature-part-1#examples-of-sas-uris)
+
+<br/>
+
+
+-- 참고
+- [Azure Blob Storage - Java Examples](http://softeng.oicr.on.ca/andy_yang/2017/02/13/azure-java-examples/s) 
