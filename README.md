@@ -1,7 +1,7 @@
 # azure-storage-lib
 
-azure-storage 중 blob 을 사용하여 upload, delete, get file download url 등의 기능이 포함되어 있는 utility를 구현
-블록 Blob 은 문서 및 미디어 파일과 같은 텍스트 또는 이진 파일을 저장하기에 적합하다
+- azure-storage 중 blob 을 사용하여 upload, delete, get file download url 등의 기능이 포함되어 있는 utility를 구현
+- 블록 Blob 은 문서 및 미디어 파일과 같은 텍스트 또는 이진 파일을 저장하기에 적합하다
 
 #### 1. 저장소 계정 생성
 - [저장소 계정 만들기 참고](https://docs.microsoft.com/ko-kr/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli) <br/>
