@@ -8,8 +8,8 @@
 
 #### 2. Azure용 Spring Boot Starter
 - [Azure용 Spring Boot Starter 참고](https://docs.microsoft.com/ko-kr/java/azure/spring-framework/spring-boot-starters-for-azure)
-
 <br/>
+
 #### 3. Blob 저장소에 관한 문서
 - Azure Blob 저장소는 최대 블록 크기가 4MB이다.
 - 모든 블록은 Azure에 업로드되고 개별적으로 저장되어 모든 블록이 성공적으로 전송되면 논리적으로 결합되고 정렬된다.
@@ -23,15 +23,15 @@
 - default 요청의 수는 1이다.
 - 약 154MB의 파일을 업로드 했을 때, concurrentRequestCount의 숫자가 1일 경우에는 약 17.4초, concurrentRequestCount의가 3일 경우에는 약 7.1초가 소요되었다.
 - [Azure Storage 성능 및 확장성](https://docs.microsoft.com/ko-kr/azure/storage/common/storage-performance-checklist)
-
 <br/>
+
 #### 5. azure.storage.connection-string 값
 application.properties의 azure.storage.connection-string 값을 구하기 위해 다음과 같이 실행
 ```
 $ az storage account show-connection-string --name {저장소} --resource-group {리소스그룹명}
 ```
-
 <br/>
+
 #### 6. SAS
 - 공유 액세스 서명을 사용하면 클라이언트에게 제한된 엑세스 권한을 부여할 수 있다.
 - 읽기 및 쓰기 권한 부여, 만료 시간, IP 주소 제한, 프로토콜 제한 등의 제어가 가능하다
