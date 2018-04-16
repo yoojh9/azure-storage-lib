@@ -32,29 +32,17 @@ public class AzureStorageLibApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		
 		// 1) file upload test
-//		File file = new File("chopper.jpg");
-//		InputStream is = new FileInputStream(file);
-//		String path = "image/"+FilenameUtils.getName(file.getAbsolutePath());
-//		long length = file.length();
-//		azureStorageUtil.uploadFile(containerName, is, path, length);
-		
-		
-//		File file = new File("BigBuckBunny.mp4");
-//		InputStream is = new FileInputStream(file);
-//		String path = "video/"+FilenameUtils.getName(file.getAbsolutePath());
-//		long length = file.length();
-//		boolean result = azureStorageUtil.uploadFile(containerName, is, path, length);
-//		System.out.println("upload file result : {}" + result);
-		
-		// 2) get SAS uri by blobName
-//		String uri = azureStorageUtil.getFileDownloadUri(containerName, "video/BigBuckBunny.mp4");
-//		System.out.println(uri);
+		File file = new File("chopper.jpg");
+		InputStream is = new FileInputStream(file);
+		String path = "image/"+FilenameUtils.getName(file.getAbsolutePath());
+		long length = file.length();
+		azureStorageUtil.uploadFile(containerName, is, path, length);
 		
 		String uri = azureStorageUtil.getFileDownloadUri(containerName, "image/chopper.jpg");
 		System.out.println(uri);
 		
 		// 3) delete blob
-//		boolean result = azureStorageUtil.deleteFile(containerName, "chopper.jpg");
+//		boolean result = azureStorageUtil.deleteFile(containerName, "image/chopper.jpg");
 //		System.out.println(result);
 	}
 	
