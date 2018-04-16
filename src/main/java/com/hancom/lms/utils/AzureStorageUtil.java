@@ -69,20 +69,20 @@ public class AzureStorageUtil {
 	// upload file stream as a block blob
 	public boolean uploadFile(String containerName, InputStream is, String fileName,  long length) {
 		try {
-			logger.debug("start upload file {} time {}", fileName, System.currentTimeMillis());
+			logger.info("start upload file {} time {}", fileName, System.currentTimeMillis());
 			
 			CloudBlobContainer container = getContainer(containerName);
 			CloudBlockBlob blob = container.getBlockBlobReference(fileName);
 			
 			// 해당 설정은 이후 테스트 해보면서 바꿔야할 듯.
 			int concurrentRequestCount = (length>64000)? 3 : 1 ;
-			logger.debug("concurrent request count {}" ,concurrentRequestCount );
+			logger.info("concurrent request count {}" ,concurrentRequestCount );
 			BlobRequestOptions options = new BlobRequestOptions();
 			options.setConcurrentRequestCount(concurrentRequestCount);
 			
 			blob.upload(is, length, AccessCondition.generateEmptyCondition(), options, new OperationContext());
 			
-			logger.debug("complete upload file {} time {}", fileName, System.currentTimeMillis());
+			logger.info("complete upload file {} time {}", fileName, System.currentTimeMillis());
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -91,10 +91,10 @@ public class AzureStorageUtil {
 		return true;
 	}
 	
-	// upload file byte array
+	// upload file byte array as a block blob
 	public boolean uploadFile(String containerName, byte[] res, String fileName) {       
 		try {
-			logger.debug("start upload file {} time {}", fileName, System.currentTimeMillis());
+			logger.info("start upload file {} time {}", fileName, System.currentTimeMillis());
 			
 			CloudBlobContainer container = getContainer(containerName);
 			CloudBlockBlob blob = container.getBlockBlobReference(fileName);
@@ -103,13 +103,13 @@ public class AzureStorageUtil {
 	        
 	        // 해당 설정은 이후 테스트 해보면서 바꿔야할 듯.
 			int concurrentRequestCount = (length>64000)? 3 : 1 ;
-			logger.debug("concurrent request count {}" ,concurrentRequestCount );
+			logger.info("concurrent request count {}" ,concurrentRequestCount );
 			BlobRequestOptions options = new BlobRequestOptions();
 			options.setConcurrentRequestCount(concurrentRequestCount);
 			
 	        blob.uploadFromByteArray(res, 0, length, AccessCondition.generateEmptyCondition(), options, new OperationContext());
 	        
-	        logger.debug("complete upload file {} time {}", fileName, System.currentTimeMillis());
+	        logger.info("complete upload file {} time {}", fileName, System.currentTimeMillis());
 	        
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -133,7 +133,7 @@ public class AzureStorageUtil {
 
 		SharedAccessBlobPolicy policy = new SharedAccessBlobPolicy();
 		
-		// expire time 지정 (UTC 시가능로 지정됨)
+		// expire time 지정 (UTC 시간으로 지정됨)
 		GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
 		calendar.setTime(new Date());
 		calendar.add(Calendar.MINUTE , 5);
