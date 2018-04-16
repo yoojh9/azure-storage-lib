@@ -18,10 +18,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.microsoft.azure.storage.AccessCondition;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.Constants;
+import com.microsoft.azure.storage.OperationContext;
 import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.BlobContainerPermissions;
+import com.microsoft.azure.storage.blob.BlobRequestOptions;
 import com.microsoft.azure.storage.blob.CloudBlob;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
@@ -66,11 +69,20 @@ public class AzureStorageUtil {
 	// upload file stream as a block blob
 	public boolean uploadFile(String containerName, InputStream is, String fileName,  long length) {
 		try {
-			logger.info("start upload file {}", fileName);
+			logger.info("start upload file {} time {}", fileName, System.currentTimeMillis());
+			
 			CloudBlobContainer container = getContainer(containerName);
 			CloudBlockBlob blob = container.getBlockBlobReference(fileName);
-			blob.setStreamWriteSizeInBytes(Constants.DEFAULT_STREAM_WRITE_IN_BYTES);
-			blob.upload(is, length);
+			
+			// 해당 설정은 이후 테스트 해보면서 바꿔야할 듯.
+			int concurrentRequestCount = (length>64000)? 3 : 1 ;
+			BlobRequestOptions options = new BlobRequestOptions();
+			options.setConcurrentRequestCount(concurrentRequestCount);
+			
+			blob.upload(is, length, AccessCondition.generateEmptyCondition(), options, new OperationContext());
+			
+			logger.info("complete upload file {} time {}", fileName, System.currentTimeMillis());
+			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return false;
@@ -81,9 +93,22 @@ public class AzureStorageUtil {
 	// upload file byte array
 	public boolean uploadFile(String containerName, byte[] res, String fileName) {       
 		try {
+			logger.info("start upload file {} time {}", fileName, System.currentTimeMillis());
+			
 			CloudBlobContainer container = getContainer(containerName);
 			CloudBlockBlob blob = container.getBlockBlobReference(fileName);
-	        blob.uploadFromByteArray(res, 0, res.length);
+			int length = res.length;
+	        blob.uploadFromByteArray(res, 0, length);
+	        
+	        // 해당 설정은 이후 테스트 해보면서 바꿔야할 듯.
+			int concurrentRequestCount = (length>64000)? 3 : 1 ;
+			BlobRequestOptions options = new BlobRequestOptions();
+			options.setConcurrentRequestCount(concurrentRequestCount);
+			
+	        blob.uploadFromByteArray(res, 0, length, AccessCondition.generateEmptyCondition(), options, new OperationContext());
+	        
+	        logger.info("complete upload file {} time {}", fileName, System.currentTimeMillis());
+	        
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return false;

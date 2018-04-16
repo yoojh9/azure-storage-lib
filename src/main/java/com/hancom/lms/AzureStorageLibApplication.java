@@ -31,19 +31,25 @@ public class AzureStorageLibApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		
 		// 1) file upload test
-		File file = new File("chopper.jpg");
+//		File file = new File("chopper.jpg");
+//		InputStream is = new FileInputStream(file);
+//		String path = "image/"+FilenameUtils.getName(file.getAbsolutePath());
+//		long length = file.length();
+//		azureStorageUtil.uploadFile(containerName, is, path, length);
+		
+		File file = new File("BigBuckBunny.mp4");
 		InputStream is = new FileInputStream(file);
-		String path = "image/"+FilenameUtils.getName(file.getAbsolutePath());
+		String path = "video/"+FilenameUtils.getName(file.getAbsolutePath());
 		long length = file.length();
 		azureStorageUtil.uploadFile(containerName, is, path, length);
 		
 		// 2) get SAS block uri
-		String uri = azureStorageUtil.getFileDownloadUri(containerName, "image/chopper.jpg");
-		System.out.println(uri);
+//		String uri = azureStorageUtil.getFileDownloadUri(containerName, "image/chopper.jpg");
+//		System.out.println(uri);
 		
 		// 3) delete blob
-//		boolean result = azureStorageUtil.deleteFile(containerName, "image/chopper.jpg");
-//		System.out.println(result);
+		boolean result = azureStorageUtil.deleteFile(containerName, "video/BigBuckBunny.mp4");
+		System.out.println(result);
 	}
 	
 	
