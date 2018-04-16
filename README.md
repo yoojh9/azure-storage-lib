@@ -7,7 +7,7 @@
 - [저장소 계정 만들기 참고](https://docs.microsoft.com/ko-kr/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli) <br/>
 
 #### 2. Azure용 Spring Boot Starter
-- [Azure용 Srping Boot Starter 참고](https://docs.microsoft.com/ko-kr/java/azure/spring-framework/spring-boot-starters-for-azure)
+- [Azure용 Spring Boot Starter 참고](https://docs.microsoft.com/ko-kr/java/azure/spring-framework/spring-boot-starters-for-azure)
 
 #### 3. Blob 저장소에 관한 문서
 - [Blob 저장소 소개](https://docs.microsoft.com/ko-kr/azure/storage/blobs/storage-blobs-introduction)
