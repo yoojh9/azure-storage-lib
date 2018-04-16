@@ -69,19 +69,20 @@ public class AzureStorageUtil {
 	// upload file stream as a block blob
 	public boolean uploadFile(String containerName, InputStream is, String fileName,  long length) {
 		try {
-			logger.info("start upload file {} time {}", fileName, System.currentTimeMillis());
+			logger.debug("start upload file {} time {}", fileName, System.currentTimeMillis());
 			
 			CloudBlobContainer container = getContainer(containerName);
 			CloudBlockBlob blob = container.getBlockBlobReference(fileName);
 			
 			// 해당 설정은 이후 테스트 해보면서 바꿔야할 듯.
 			int concurrentRequestCount = (length>64000)? 3 : 1 ;
+			logger.debug("concurrent request count {}" ,concurrentRequestCount );
 			BlobRequestOptions options = new BlobRequestOptions();
 			options.setConcurrentRequestCount(concurrentRequestCount);
 			
 			blob.upload(is, length, AccessCondition.generateEmptyCondition(), options, new OperationContext());
 			
-			logger.info("complete upload file {} time {}", fileName, System.currentTimeMillis());
+			logger.debug("complete upload file {} time {}", fileName, System.currentTimeMillis());
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -93,7 +94,7 @@ public class AzureStorageUtil {
 	// upload file byte array
 	public boolean uploadFile(String containerName, byte[] res, String fileName) {       
 		try {
-			logger.info("start upload file {} time {}", fileName, System.currentTimeMillis());
+			logger.debug("start upload file {} time {}", fileName, System.currentTimeMillis());
 			
 			CloudBlobContainer container = getContainer(containerName);
 			CloudBlockBlob blob = container.getBlockBlobReference(fileName);
@@ -102,12 +103,13 @@ public class AzureStorageUtil {
 	        
 	        // 해당 설정은 이후 테스트 해보면서 바꿔야할 듯.
 			int concurrentRequestCount = (length>64000)? 3 : 1 ;
+			logger.debug("concurrent request count {}" ,concurrentRequestCount );
 			BlobRequestOptions options = new BlobRequestOptions();
 			options.setConcurrentRequestCount(concurrentRequestCount);
 			
 	        blob.uploadFromByteArray(res, 0, length, AccessCondition.generateEmptyCondition(), options, new OperationContext());
 	        
-	        logger.info("complete upload file {} time {}", fileName, System.currentTimeMillis());
+	        logger.debug("complete upload file {} time {}", fileName, System.currentTimeMillis());
 	        
 		} catch (Exception e) {
 			logger.error(e.getMessage());
