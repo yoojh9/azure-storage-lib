@@ -21,7 +21,7 @@
 - 블록을 병렬로 업로드 해야한다.
 - 해당 예제에서는 BlobRequestOptions.setConcurrentRequestCount()을 사용하여, 동시에 업로드 할 요청의 수를 설정한다.
 - default 요청의 수는 1이다.
-- 154MB의 파일을 업로드 했을 때, concurrentRequestCount의 숫자가 1일 경우에는 약 17.4초, concurrentRequestCount의가 3일 경우에는 약 6.4초가 소요되었다.
+- 154MB의 파일을 업로드 했을 때, concurrentRequestCount의 숫자가 1일 경우에는 약 17.4초, concurrentRequestCount의가 8일 경우에는 약 5.2초가 소요되었다.
 - [Azure Storage 성능 및 확장성](https://docs.microsoft.com/ko-kr/azure/storage/common/storage-performance-checklist)
 <br/>
 
