@@ -3,10 +3,12 @@
 - azure-storage 중 blob 을 사용하여 upload, delete, get file download url 등의 기능이 포함되어 있는 utility를 구현
 - 블록 Blob 은 문서 및 미디어 파일과 같은 텍스트 또는 이진 파일을 저장하기에 적합하다
 - 해당 프로젝트를 정상적으로 실행하기 위해서는 application.properties의 azure.storage.connection-string 값을 추가하여야 한다. (5번 참고)  
-
+<br/>
 
 #### 1. 저장소 계정 생성
-- [저장소 계정 만들기 참고](https://docs.microsoft.com/ko-kr/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli) <br/>
+- [저장소 계정 만들기 참고](https://docs.microsoft.com/ko-kr/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli) 
+<br/>
+
 
 #### 2. Azure용 Spring Boot Starter
 - [Azure용 Spring Boot Starter 참고](https://docs.microsoft.com/ko-kr/java/azure/spring-framework/spring-boot-starters-for-azure)
