@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.commons.io.FilenameUtils;
+import org.mockito.internal.util.io.IOUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -29,13 +30,22 @@ public class AzureStorageLibApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		
+			
 		// 1) file upload test
-		File file = new File("chopper.jpg");
-		InputStream is = new FileInputStream(file);
-		String path = "image/"+FilenameUtils.getName(file.getAbsolutePath());
-		long length = file.length();
-		azureStorageUtil.uploadFile(containerName, is, path, length);
+		InputStream is = null;
+		
+		try {
+			File file = new File("chopper.jpg");
+			is = new FileInputStream(file);
+			String path = "image/"+FilenameUtils.getName(file.getAbsolutePath());
+			long length = file.length();
+			azureStorageUtil.uploadImage(containerName, is, path, length);
+			is.close();
+		} catch(Exception e){
+			e.printStackTrace();
+		} finally {
+			IOUtil.closeQuietly(is);
+		}
 		
 		// 2) get SAS block uri
 		String uri = azureStorageUtil.getFileDownloadUri(containerName, "image/chopper.jpg");
