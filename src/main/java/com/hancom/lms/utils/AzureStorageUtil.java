@@ -4,10 +4,12 @@ import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
@@ -24,7 +26,9 @@ import com.microsoft.azure.storage.blob.BlobRequestOptions;
 import com.microsoft.azure.storage.blob.CloudBlob;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
+import com.microsoft.azure.storage.blob.CloudBlobDirectory;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
+import com.microsoft.azure.storage.blob.ListBlobItem;
 import com.microsoft.azure.storage.blob.SharedAccessBlobPermissions;
 import com.microsoft.azure.storage.blob.SharedAccessBlobPolicy;
 
@@ -89,7 +93,7 @@ public class AzureStorageUtil {
 			logger.info("complete upload image {}", fileName);
 
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("azure uploadImage error : {}", e);
 			return false;
 		} 
 		return true;
@@ -125,7 +129,7 @@ public class AzureStorageUtil {
 			logger.info("complete upload file {} time {}", fileName, System.currentTimeMillis());
 
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("azure uploadStream error : {}", e);
 			return false;
 		} 
 		return true;
@@ -160,7 +164,7 @@ public class AzureStorageUtil {
 	        logger.info("complete upload file {} time {}", fileName, System.currentTimeMillis());
 	        
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error("azure uploadByteArray error : {}", e);
 			return false;
 		}
 		return true;
@@ -175,54 +179,105 @@ public class AzureStorageUtil {
 	 * @throws URISyntaxException
 	 * @throws StorageException
 	 */
-	public String getFileDownloadUri(String containerName, String blobName) throws URISyntaxException, StorageException {
-		
-		CloudBlobContainer container = getContainer(containerName);
-		CloudBlob blob = container.getBlobReferenceFromServer(blobName);
-		
-		if(!blob.exists()){
-			logger.error("blob {} not found", blobName);
-			return null;
-		}
-
-		SharedAccessBlobPolicy policy = new SharedAccessBlobPolicy();
-		
-		// expire time 지정 (UTC 시간으로 지정됨)
-		GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-		calendar.setTime(new Date());
-		calendar.add(Calendar.MINUTE , 5);
-		policy.setSharedAccessExpiryTime(calendar.getTime());	
-		
+	public String getFileDownloadUri(String containerName, String blobName){
 		String sasUri = null;
+		
 		try {
+			CloudBlobContainer container = getContainer(containerName);
+			CloudBlob blob = container.getBlobReferenceFromServer(blobName);
+
+			if(!blob.exists()){
+				logger.error("blob {} not found", blobName);
+				return null;
+			}
+
+			SharedAccessBlobPolicy policy = new SharedAccessBlobPolicy();
+			
+			// expire time 지정 (UTC 시간으로 지정됨)
+			GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+			calendar.setTime(new Date());
+			calendar.add(Calendar.MINUTE , 5);
+			policy.setSharedAccessExpiryTime(calendar.getTime());	
+			
 			String sasToken = blob.generateSharedAccessSignature(policy, "readPolicy");
 			sasUri = String.format("%s?%s", blob.getUri(), sasToken);
+			
+		} catch (URISyntaxException | StorageException e) {
+			logger.error("invalid azure storage : {}" , e);
 		} catch (InvalidKeyException e) {
-			logger.error("invalid SAS Token error : {}" , e.getMessage());
+			logger.error("invalid SAS Token error : {}" , e);
 		}
 		
 		return sasUri;
 	}
 
 	/**
-	 * blob 삭제
+	 * 가상 디렉토리 내에 있는 파일 리스트 리턴
+	 * @param containerName
+	 * @param directoryName
+	 * @return
+	 * @throws StorageException
+	 * @throws URISyntaxException
+	 */
+	public List<CloudBlob> getAllFiles(String containerName, String directoryName) throws StorageException, URISyntaxException {
+		
+		List<CloudBlob> fileList = new ArrayList<>();
+		
+		CloudBlobContainer container = getContainer(containerName);
+		CloudBlobDirectory directory = container.getDirectoryReference(directoryName);
+		
+		for(ListBlobItem blobItem : directory.listBlobs()){
+			if(blobItem instanceof CloudBlob) {
+				fileList.add((CloudBlob) blobItem);
+			}
+		}
+		
+		return fileList;
+	}
+	
+	/**
+	 * blob 삭제 (단일 파일 삭제)
 	 * @param containerName
 	 * @param blobName
 	 * @return
 	 * @throws URISyntaxException
 	 * @throws StorageException
 	 */
-	public boolean deleteFile(String containerName, String blobName) throws URISyntaxException, StorageException{
-		CloudBlobContainer container = getContainer(containerName);
-		CloudBlob blob = container.getBlobReferenceFromServer(blobName);
+	public boolean deleteFile(String containerName, String blobName) {
+		try {
+			CloudBlobContainer container = getContainer(containerName);
+			CloudBlob blob = container.getBlobReferenceFromServer(blobName);
+			
+			return blob.deleteIfExists();
+			
+		} catch(URISyntaxException | StorageException e) {
+			logger.error("file {} delete failed : {}", blobName, e);
+			return false;
+		}
+	}
+	
+	/**
+	 * 디렉토리 내에 있는 파일 모두 삭제
+	 * @param containerName
+	 * @param directoryName
+	 * @return
+	 */
+	public boolean deleteAllFiles(String containerName, String directoryName) {
+		
+		try {
+			List<CloudBlob> fileList = getAllFiles(containerName, directoryName);
+			boolean result = false;
 
-		if(!blob.exists()){
-			logger.error("blob {} not found", blobName);
+			for(CloudBlob blob : fileList){
+				result = blob.deleteIfExists();
+				logger.info("blob {} delete {}", blob.getName(), result);
+			}
+		} catch(URISyntaxException | StorageException e) {
+			logger.error("fail to delete directory {} : {}", directoryName, e);
 			return false;
 		}
 		
-		// true : delete file success, false: delete file failed.
-		return blob.deleteIfExists();
+		return true;
 	}
 	
 }
