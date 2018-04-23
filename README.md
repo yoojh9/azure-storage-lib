@@ -2,19 +2,19 @@
 
 - azure-storage 중 blob 을 사용하여 upload, delete, get file download url 등의 기능이 포함되어 있는 utility를 구현
 - 블록 Blob 은 문서 및 미디어 파일과 같은 텍스트 또는 이진 파일을 저장하기에 적합하다  
-- 해당 프로젝트를 정상적으로 실행하기 위해서는 application.properties의 azure.storage.connection-string 값을 추가하여야 한다. (5번 참고)  
+- 해당 프로젝트를 정상적으로 실행하기 위해서는 application.properties의 azure.storage.connection-string 값을 추가하여야 한다. (7번 참고)  
 
 
 #### 1. Azure CLI 사용
 - Azure CLI는 Azure 리소스를 관리할 수있는 커맨드 라인 도구이다.
 - 따로 로컬에 Azure CLI를 설치하고 싶지 않다면 [Azure Cloud Shell](https://docs.microsoft.com/ko-kr/azure/cloud-shell/overview) 을 사용해도 된다.
 - [Azure CLI 설치 링크](https://docs.microsoft.com/ko-kr/cli/azure/install-azure-cli?view=azure-cli-latest)
-- Azure CLI에서 작업을 실행하기 위해서는 로그인 인증이 필요하다. 커맨드 라인에 $az login 이라고 입력하면 특정 코드를 응답으로 준다. 이 코드를 https://microsoft.com/devicelogin 페이지에 접속하여 코드를 입력 한 후, 특정 계정과 연결하면 로컬에서도 azure 서비스를 사용할 수 있다.
+- Azure CLI에서 작업을 실행하기 위해서는 로그인 인증이 필요하다. 커맨드 라인에 $az login 이라고 입력하면 특정 코드를 응답으로 준다. 이 코드를 https://microsoft.com/devicelogin 페이지에 접속하여 입력 한 후, 특정 계정과 연결하면 로컬에서도 azure 서비스를 사용할 수 있다.
 
 ```
 $ az login
 
-To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code {코드명} to authenticate.
+>> To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code {코드명} to authenticate.
 ```
 
 
