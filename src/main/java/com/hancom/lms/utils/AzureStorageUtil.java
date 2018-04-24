@@ -87,10 +87,14 @@ public class AzureStorageUtil {
 		try {
 			CloudBlobContainer container = getContainer(containerName);
 			CloudBlockBlob blob = container.getBlockBlobReference(fileName);
+			String mimeType = MimeTypeUtil.getMimeType(fileName);
 			
+			logger.info("start upload image {} mimeType {}", fileName, mimeType);
+			
+			blob.getProperties().setContentType(mimeType);
 			blob.upload(is, length);
 			
-			logger.info("complete upload image {}", fileName);
+			logger.info("complete upload image {} mimeType {}", fileName, mimeType);
 
 		} catch (Exception e) {
 			logger.error("azure uploadImage error : {}", e);
@@ -111,19 +115,19 @@ public class AzureStorageUtil {
 	 */
 	public boolean uploadStream(String containerName, InputStream is, String fileName, long length) {
 		try {
-			BufferedInputStream bis = new BufferedInputStream(is);
-			
-			logger.info("start upload file {} time {}", fileName, System.currentTimeMillis());
-			
 			CloudBlobContainer container = getContainer(containerName);
 			CloudBlockBlob blob = container.getBlockBlobReference(fileName);
+			String mimeType = MimeTypeUtil.getMimeType(fileName);
+			
+			BufferedInputStream bis = new BufferedInputStream(is);
 			
 			// TODO: 임시로 8로 설정해 놓음. 나중에 테스트 하면서 바꿔야 할 듯 
+			logger.info("start upload file {} time {} mimeType {}", fileName, System.currentTimeMillis(), mimeType);
 			int concurrentRequestCount = 8;
-			logger.info("concurrent request count {}" ,concurrentRequestCount );
 			BlobRequestOptions options = new BlobRequestOptions();
 			options.setConcurrentRequestCount(concurrentRequestCount); // 블록 병렬 처리
 			
+			blob.getProperties().setContentType(mimeType);
 			blob.upload(bis, length, null, options, null);
 			
 			logger.info("complete upload file {} time {}", fileName, System.currentTimeMillis());
@@ -146,20 +150,20 @@ public class AzureStorageUtil {
 	 */
 	public boolean uploadByteArray(String containerName, byte[] res, String fileName) {       
 		try {
-			logger.info("start upload file {} time {}", fileName, System.currentTimeMillis());
 			
 			CloudBlobContainer container = getContainer(containerName);
 			CloudBlockBlob blob = container.getBlockBlobReference(fileName);
-			int length = res.length;
-	        blob.uploadFromByteArray(res, 0, length);
-	        
+			String mimeType = MimeTypeUtil.getMimeType(fileName);
+
 	        // TODO: 임시로 8로 설정해 놓음. 나중에 테스트 하면서 바꿔야 할 듯 
+			logger.info("start upload file {} time {}  mimeType {}", fileName, System.currentTimeMillis(), mimeType);
+
 			int concurrentRequestCount = 8;
-			logger.info("concurrent request count {}" ,concurrentRequestCount);
 			BlobRequestOptions options = new BlobRequestOptions();
 			options.setConcurrentRequestCount(concurrentRequestCount); // 블록 병렬 처리
 			
-	        blob.uploadFromByteArray(res, 0, length, null, options, null);
+			blob.getProperties().setContentType(mimeType);
+	        blob.uploadFromByteArray(res, 0, res.length, null, options, null);
 	        
 	        logger.info("complete upload file {} time {}", fileName, System.currentTimeMillis());
 	        
@@ -279,5 +283,4 @@ public class AzureStorageUtil {
 		
 		return true;
 	}
-	
 }
